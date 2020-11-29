@@ -2,10 +2,12 @@ package Controller;
 
 import javafx.application.Application;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.net.Socket;
 
-public class Client {
+public class ClientTwo {
     String username = "";
     int port = 0;
     private static Socket clientSocket;
@@ -14,13 +16,13 @@ public class Client {
     private static BufferedWriter out;
     static ClientSomething cs = new ClientSomething();
 
-    public Client(String username, int port) {
+    public ClientTwo(String username, int port) {
         this.username = username;
         this.port = port;
         cs = new ClientSomething("localhost",3244,this.username);
     }
 
-    public Client() {
+    public ClientTwo() {
     }
 
     public String getUsername() {
@@ -57,5 +59,4 @@ public class Client {
     public static void main(String[] args) {
         Application.launch(Main.class,args);
     }
-
 }

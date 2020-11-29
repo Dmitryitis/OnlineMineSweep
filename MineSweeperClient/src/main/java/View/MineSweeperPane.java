@@ -1,6 +1,7 @@
 package View;
 
 import Controller.Client;
+import Controller.ClientTwo;
 import Interfaces.FieldHandler;
 import Interfaces.HasParent;
 import Model.*;
@@ -29,6 +30,7 @@ public final class MineSweeperPane implements HasParent {
     private static Label label_timer = new Label();
     public static int timer = -1;
     Client client = new Client();
+    ClientTwo clientTwo = new ClientTwo();
     private final int rows;
     private final int columns;
     private final Minefield field;
@@ -45,13 +47,15 @@ public final class MineSweeperPane implements HasParent {
     );
 
     public MineSweeperPane(MineSweeperPane pane) {
-        this(pane.field, pane.appController, pane.client);
+        this(pane.field, pane.appController, pane.client, pane.clientTwo);
     }
 
-    public MineSweeperPane(Minefield field, final GameField appController, Client client) {
+    public MineSweeperPane(Minefield field, final GameField appController, Client client, ClientTwo clientTwo) {
         this.field = field;
         this.appController = appController;
         this.client = client;
+        this.clientTwo = clientTwo;
+
 
         rows = field.getRowCount();
         columns = field.getColumnCount();
@@ -61,6 +65,11 @@ public final class MineSweeperPane implements HasParent {
         canvas.setLayoutY(30);
         canvas.setWidth(340);
         canvas.setHeight(340);
+
+
+        label_timer.setText("");
+        timeline.stop();
+
 
         canvas.setOnMouseClicked(this::onCanvasClicked);
 
@@ -115,7 +124,7 @@ public final class MineSweeperPane implements HasParent {
         return root;
     }
 
-    private void onNewGame() {
+    public void onNewGame() {
         field.reset();
     }
 
@@ -131,14 +140,19 @@ public final class MineSweeperPane implements HasParent {
 
             if (client == null) {
                 System.out.println("ouuu clent");
-            } else if (client.isConnect() && appController.getName_of_game().equals("serverGame")) {
+            } else if (appController.getName_of_game().equals("serverGame") & client.isConnect()) {
+                System.out.println(appController.getName_of_game());
                 if (square.getType() == Squares.BLANK) {
                     try {
                         if (timer == 0) {
                             label_timer.setText("Время вышло. Ты проиграл");
+                            timeline.stop();
+                            timer = -1;
+                            onNewGame();
                             return;
                         }
                         timer = client.getSendMessage("blank");
+
                         System.out.println("onCanvas: " + timer);
                         updateTime(timer);
                     } catch (IOException e) {
@@ -146,6 +160,8 @@ public final class MineSweeperPane implements HasParent {
                     }
                 }
             }
+
+
             canvas.clearSelection();
             square.reveal();
         }
@@ -189,6 +205,11 @@ public final class MineSweeperPane implements HasParent {
                 break;
             default:
                 text = "";
+        }
+
+        if (text.equals("You lost!") || text.equals("Congratulations, you won!")) {
+            timeline.stop();
+            timer = -1;
         }
 
         status.setText(text);

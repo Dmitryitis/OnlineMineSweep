@@ -21,9 +21,7 @@ public class MenuBox extends Pane {
         getChildren().remove(MenuBox.subMenu);
         MenuBox.subMenu = subMenu;
         this.type = subMenu.get_type();
-        System.out.println("MenuBox: "+this.type);
         if (type.equals("gameField")){
-            System.out.println("211");
             bg.setFill(Color.WHITE);
             bg.setOpacity(1);
         }

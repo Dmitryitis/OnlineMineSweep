@@ -2,14 +2,17 @@ package Controller;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class ClientSomething {
     private int port;
     private String addr;
-    private BufferedReader in;
-    private BufferedWriter out;
+    private static BufferedReader in;
+    private static BufferedWriter out;
     private static Socket clientSocket;
     private String username;
+    private static ObjectOutputStream outmassiv;
+    private static ObjectInputStream inmassiv;
 
     public ClientSomething() {
     }
@@ -18,8 +21,6 @@ public class ClientSomething {
         this.addr = addr;
         this.port = port;
         this.username = username;
-
-
     }
 
     public void setWorkForServer() throws IOException {
@@ -38,6 +39,7 @@ public class ClientSomething {
 
         String serverWord = in.readLine();
         System.out.println(serverWord);
+
     }
 
     public boolean isConnected() {
@@ -52,6 +54,33 @@ public class ClientSomething {
         }
         time_result = in.readLine();
         return Integer.parseInt(time_result);
+    }
+
+    public String getMessageFieldFromServer(String field) throws IOException {
+        String res = "";
+        String s = "";
+        String[] field_mass = field.split("\n");
+        for (String fieldMass : field_mass) {
+            if (clientSocket.isConnected()) {
+                out.write(fieldMass + "\n");
+                out.flush();
+                s = in.readLine();
+                res += s + "\n";
+            }
+        }
+        return res;
+    }
+
+    public String getMessageToServerSquare(String message) throws IOException {
+        int[] res = new int[2];
+        String r = "";
+        if (message.equals("square") && clientSocket.isConnected()) {
+            out.write(message + "\n");
+            out.flush();
+            String p = in.readLine();
+            r += p;
+        }
+        return r;
     }
 
 }

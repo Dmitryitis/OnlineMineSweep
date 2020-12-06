@@ -29,6 +29,7 @@ public final class MineSweeperPane implements HasParent {
     private final Label status;
     private static Label label_timer = new Label();
     public static int timer = -1;
+    public static Square botSquare = null;
     Client client = new Client();
     ClientTwo clientTwo = new ClientTwo();
     private final int rows;
@@ -37,6 +38,7 @@ public final class MineSweeperPane implements HasParent {
     private final FieldCanvas canvas;
     private final GameField appController;
     static boolean click = true;
+    static int turn = 0;
     static Timeline timeline = new Timeline(
             new KeyFrame(Duration.seconds(1),
                     ae -> {
@@ -114,6 +116,8 @@ public final class MineSweeperPane implements HasParent {
             }
 
         });
+
+
     }
 
     public Parent asParent() {
@@ -129,6 +133,33 @@ public final class MineSweeperPane implements HasParent {
     }
 
     private void onCanvasClicked(MouseEvent event) {
+        if (!field.isGameOver() & botSquare != null & turn == 1 & appController.getName_of_game().equals("serverGame") & client.isConnect()) {
+            label_timer.setText("Сейчас ходит сервер");
+            turn = 0;
+            if (botSquare != null && botSquare.isMine()) {
+                label_timer.setText("You win.Server boom");
+                timeline.stop();
+                timer = -1;
+                canvas.clearSelection();
+                botSquare.reveal();
+                drawSquare(botSquare);
+                drawBoard();
+                updateText(State.WON);
+                return;
+            }
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            canvas.clearSelection();
+            botSquare.reveal();
+            drawSquare(botSquare);
+            drawBoard();
+            updateTime(timer);
+            return;
+        }
+        turn = 1;
         Square square = findSquare(event);
         int clicks = event.getClickCount();
         MouseButton button = event.getButton();
@@ -140,30 +171,68 @@ public final class MineSweeperPane implements HasParent {
 
             if (client == null) {
                 System.out.println("ouuu clent");
-            } else if (appController.getName_of_game().equals("serverGame") & client.isConnect()) {
+            } else if (!field.isGameOver() & appController.getName_of_game().equals("serverGame") & client.isConnect()) {
                 System.out.println(appController.getName_of_game());
+                int[][] fieldForServer = new int[field.getRowCount()][field.getColumnCount()];
+                String answer = "";
+                String res = "";
                 if (square.getType() == Squares.BLANK) {
                     try {
                         if (timer == 0) {
                             label_timer.setText("Время вышло. Ты проиграл");
                             timeline.stop();
                             timer = -1;
-                            onNewGame();
+                            updateText(State.LOST);
                             return;
                         }
+
+                        canvas.clearSelection();
+                        square.reveal();
+                        drawSquare(square);
+                        drawBoard();
+
+
+                        fieldForServer = getField(field);
+                        String strForServer = "";
+                        for (int i = 0; i < field.getRowCount(); i++) {
+                            for (int j = 0; j < field.getColumnCount(); j++) {
+                                strForServer += fieldForServer[i][j] + " ";
+                            }
+                            strForServer += "\n";
+                        }
+                        System.out.println(strForServer);
+                        Squares hitmine = getTable(field);
+                        if (hitmine == Squares.HITMINE) {
+                            timeline.stop();
+                            timer = -1;
+                            return;
+                        }
+
+                        answer = client.getMessageFieldFromServer(strForServer);
+                        res = client.getMessageToServerSquare("square");
+
+                        res = res.replace("\n", "");
+                        String[] sq = res.split(" ");
+                        System.out.println(sq[0] + " " + sq[1]);
+                        botSquare = field.getSquare(Integer.parseInt(sq[0]), Integer.parseInt(sq[1]));
+
+                        if (!field.isGameOver()) {
+                            canvas.setOnMouseClicked(this::onCanvasClicked);
+                        }
+
                         timer = client.getSendMessage("blank");
 
                         System.out.println("onCanvas: " + timer);
                         updateTime(timer);
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
+            } else if (appController.getName_of_game().equals("singleGame")){
+                canvas.clearSelection();
+                square.reveal();
             }
-
-
-            canvas.clearSelection();
-            square.reveal();
         }
     }
 
@@ -235,6 +304,33 @@ public final class MineSweeperPane implements HasParent {
         label_timer.setText("Времени осталось: " + tim);
         timeline.setCycleCount(tim);
         timeline.play();
+    }
+
+    public Squares getTable(Minefield field) {
+        for (int i = 0; i < field.getRowCount(); i++) {
+            for (int j = 0; j < field.getColumnCount(); j++) {
+                if (field.getSquare(i, j).getType() == Squares.HITMINE) {
+                    return Squares.HITMINE;
+                }
+            }
+        }
+        return Squares.BLANK;
+    }
+
+    public int[][] getField(Minefield field) {
+        int[][] array_field = new int[field.getRowCount()][field.getColumnCount()];
+        for (int i = 0; i < field.getRowCount(); i++) {
+            for (int j = 0; j < field.getColumnCount(); j++) {
+                if (field.getSquare(i, j).getType() == Squares.BLANK) {
+                    array_field[i][j] = 0;
+                } else if (field.getSquare(i, j).getType() == Squares.EXPOSED) {
+                    array_field[i][j] = 1;
+                } else if (field.getSquare(i, j).getType() == Squares.HITMINE) {
+                    array_field[i][j] = -1;
+                }
+            }
+        }
+        return array_field;
     }
 
 }

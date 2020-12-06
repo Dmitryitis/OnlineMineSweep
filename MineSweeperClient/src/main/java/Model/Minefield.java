@@ -68,14 +68,14 @@ public class Minefield {
         return (state == State.LOST || state == State.WON);
     }
 
-    void updateSquare(Square square) {
+    public void updateSquare(Square square) {
         for (FieldHandler handler : handlers) {
             handler.updateSquare(square);
         }
     }
 
 
-    void reveal(Square square) {
+    public void reveal(Square square) {
         assert !isGameOver() && square.getType() == Squares.BLANK;
 
         if (state == State.START) {
@@ -126,7 +126,7 @@ public class Minefield {
         setState(State.START);
     }
 
-    void updateBoard() {
+    public void updateBoard() {
         handlers.forEach(FieldHandler::updateBoard);
     }
 

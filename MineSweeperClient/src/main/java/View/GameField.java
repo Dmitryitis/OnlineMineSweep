@@ -1,6 +1,7 @@
 package View;
 
 import Controller.Client;
+import Controller.ClientTwo;
 import Model.Minefield;
 
 import javafx.geometry.Insets;
@@ -28,6 +29,7 @@ public class GameField extends Pane {
     public static BorderPane bp;
     public static StackPane sp = new StackPane();
     public static Client client;
+    public static ClientTwo clientTwo;
     public static MineSweeperPane minesweeper;
     private String name_of_game;
 
@@ -53,7 +55,7 @@ public class GameField extends Pane {
         if (!spawnMode) {
             return;
         }
-        Text name = new Text("Controller.MineSweeper");
+        Text name = new Text("OnlineMineSweeper");
         name.setFont(Font.font("file:src/main/java/webapp/fonts/OptimusPrinceps.ttf", FontWeight.BOLD, 30));
         name.setFill(Color.WHITE);
 
@@ -79,7 +81,7 @@ public class GameField extends Pane {
         bp = new BorderPane(hBox);
 
         Minefield minefield = new Minefield(10, 10, 10);
-        MineSweeperPane minesweeper = new MineSweeperPane(minefield, this,client);
+        MineSweeperPane minesweeper = new MineSweeperPane(minefield, this,client,clientTwo);
         canvas.getChildren().addAll(minesweeper.asParent());
     }
 
@@ -89,7 +91,7 @@ public class GameField extends Pane {
 
         Minefield minefield = new Minefield(10, 10, 10);
 
-        MineSweeperPane minesweeper = new MineSweeperPane(minefield, this,client);
+        MineSweeperPane minesweeper = new MineSweeperPane(minefield, this,client,clientTwo);
 
         canvas.getChildren().add(minesweeper.asParent());
         spawnMode = false;

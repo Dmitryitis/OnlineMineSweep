@@ -12,6 +12,7 @@ public class Client {
     private static BufferedReader reader;
     private static BufferedReader in;
     private static BufferedWriter out;
+    private static ObjectOutputStream outmassiv;
     static ClientSomething cs = new ClientSomething();
 
     public Client(String username, int port) {
@@ -56,6 +57,14 @@ public class Client {
 
     public static void main(String[] args) {
         Application.launch(Main.class,args);
+    }
+
+    public String getMessageFieldFromServer(String field) throws IOException {
+        return cs.getMessageFieldFromServer(field);
+    }
+
+    public String getMessageToServerSquare(String message) throws IOException {
+        return cs.getMessageToServerSquare(message);
     }
 
 }

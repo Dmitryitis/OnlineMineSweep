@@ -16,6 +16,7 @@ public class Square {
         this.column = column;
     }
 
+
     public Squares getType() {
         return type;
     }

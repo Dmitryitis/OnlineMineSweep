@@ -1,7 +1,6 @@
 package View;
 
 import Controller.Client;
-import Controller.ClientTwo;
 import Interfaces.FieldHandler;
 import Interfaces.HasParent;
 import Model.*;
@@ -14,14 +13,11 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.PaneBuilder;
-import javafx.scene.paint.Color;
+
 import javafx.util.Duration;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+
 
 
 public final class MineSweeperPane implements HasParent {
@@ -31,13 +27,13 @@ public final class MineSweeperPane implements HasParent {
     public static int timer = -1;
     public static Square botSquare = null;
     Client client = new Client();
-    ClientTwo clientTwo = new ClientTwo();
     private final int rows;
     private final int columns;
     private final Minefield field;
     private final FieldCanvas canvas;
     private final GameField appController;
     static boolean click = true;
+    static boolean gameover = false;
     static int turn = 0;
     static Timeline timeline = new Timeline(
             new KeyFrame(Duration.seconds(1),
@@ -49,16 +45,15 @@ public final class MineSweeperPane implements HasParent {
     );
 
     public MineSweeperPane(MineSweeperPane pane) {
-        this(pane.field, pane.appController, pane.client, pane.clientTwo);
+        this(pane.field, pane.appController, pane.client);
     }
 
-    public MineSweeperPane(Minefield field, final GameField appController, Client client, ClientTwo clientTwo) {
+    public MineSweeperPane(Minefield field, final GameField appController, Client client) {
         this.field = field;
         this.appController = appController;
         this.client = client;
-        this.clientTwo = clientTwo;
 
-
+        gameover = false;
         rows = field.getRowCount();
         columns = field.getColumnCount();
 
@@ -133,10 +128,11 @@ public final class MineSweeperPane implements HasParent {
     }
 
     private void onCanvasClicked(MouseEvent event) {
-        if (!field.isGameOver() & botSquare != null & turn == 1 & appController.getName_of_game().equals("serverGame") & client.isConnect()) {
+        if (!gameover & !field.isGameOver() & botSquare != null & turn == 1 & appController.getName_of_game().equals("serverGame") & client.isConnect()) {
             label_timer.setText("Сейчас ходит сервер");
             turn = 0;
             if (botSquare != null && botSquare.isMine()) {
+                gameover = true;
                 label_timer.setText("You win.Server boom");
                 timeline.stop();
                 timer = -1;
@@ -156,6 +152,11 @@ public final class MineSweeperPane implements HasParent {
             botSquare.reveal();
             drawSquare(botSquare);
             drawBoard();
+            try {
+                timer = client.getSendMessage("blank");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             updateTime(timer);
             return;
         }
@@ -171,7 +172,7 @@ public final class MineSweeperPane implements HasParent {
 
             if (client == null) {
                 System.out.println("ouuu clent");
-            } else if (!field.isGameOver() & appController.getName_of_game().equals("serverGame") & client.isConnect()) {
+            } else if (!gameover & !field.isGameOver() & appController.getName_of_game().equals("serverGame") & client.isConnect()) {
                 System.out.println(appController.getName_of_game());
                 int[][] fieldForServer = new int[field.getRowCount()][field.getColumnCount()];
                 String answer = "";
@@ -182,7 +183,12 @@ public final class MineSweeperPane implements HasParent {
                             label_timer.setText("Время вышло. Ты проиграл");
                             timeline.stop();
                             timer = -1;
+
                             updateText(State.LOST);
+                            gameover = true;
+                            if (field.isGameOver()){
+                                System.out.println("uraaaa i am lost");
+                            }
                             return;
                         }
 
@@ -216,7 +222,7 @@ public final class MineSweeperPane implements HasParent {
                         System.out.println(sq[0] + " " + sq[1]);
                         botSquare = field.getSquare(Integer.parseInt(sq[0]), Integer.parseInt(sq[1]));
 
-                        if (!field.isGameOver()) {
+                        if (!gameover) {
                             canvas.setOnMouseClicked(this::onCanvasClicked);
                         }
 
@@ -229,7 +235,7 @@ public final class MineSweeperPane implements HasParent {
                         e.printStackTrace();
                     }
                 }
-            } else if (appController.getName_of_game().equals("singleGame")){
+            } else if (appController.getName_of_game().equals("singleGame")) {
                 canvas.clearSelection();
                 square.reveal();
             }
@@ -322,9 +328,11 @@ public final class MineSweeperPane implements HasParent {
         for (int i = 0; i < field.getRowCount(); i++) {
             for (int j = 0; j < field.getColumnCount(); j++) {
                 if (field.getSquare(i, j).getType() == Squares.BLANK) {
-                    array_field[i][j] = 0;
+                    array_field[i][j] = -2;
                 } else if (field.getSquare(i, j).getType() == Squares.EXPOSED) {
-                    array_field[i][j] = 1;
+                    int sq =field.getSquare(i,j).getMineCount();
+                    System.out.println(sq+" ");
+                    array_field[i][j] = sq;
                 } else if (field.getSquare(i, j).getType() == Squares.HITMINE) {
                     array_field[i][j] = -1;
                 }

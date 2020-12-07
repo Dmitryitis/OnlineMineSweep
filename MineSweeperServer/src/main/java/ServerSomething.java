@@ -49,53 +49,60 @@ public class ServerSomething extends Thread {
                     break;
                 }
 
-                for (ServerSomething ss : Server.serverList) {
-                    int time = 10 + (int) (Math.random() * 10);
-                    if (word.equalsIgnoreCase("blank")) {
+                int time = 10 + (int) (Math.random() * 10);
+                if (word.equalsIgnoreCase("blank")) {
 
-                        String time_string = String.valueOf(time);
-                        out.write(time_string + "\n");
-                        out.flush();
-                    } else if (word.startsWith("0") || word.startsWith("1") || word.startsWith("-1")) {
-                        String res = word;
+                    String time_string = String.valueOf(time);
+                    out.write(time_string + "\n");
+                    out.flush();
+                } else if (word.startsWith("-2") || word.startsWith("1")
+                        || word.startsWith("2")
+                        || word.startsWith("-1")
+                        || word.startsWith("3")
+                        || word.startsWith("4")
+                        || word.startsWith("5")) {
+                    String res = word;
 
-                        field += res + "\n";
-                        out.write("Записалась " + "\n");
-                        out.flush();
-                    } else if (word.startsWith("square")) {
-                        field = field.replace("null", "");
-                        ArrayList<ArrayList<Integer>> random_square = new ArrayList<>();
-                        ArrayList<Integer> result = new ArrayList<>();
-                        System.out.println(field);
-                        String[] field_row = field.split("\n");
-                        for (int i = 0; i < field_row.length; i++) {
-                            String[] field_col = field_row[i].split(" ");
-                            for (int j = 0; j < field_col.length; j++) {
-                                if (field_col[j].equals("0")) {
-                                    ArrayList<Integer> square = new ArrayList<>();
-                                    square.add(i);
-                                    square.add(j);
-                                    random_square.add(square);
-                                }
+                    field += res + "\n";
+                    out.write("Записалась " + "\n");
+                    out.flush();
+                } else if (word.startsWith("square")) {
+                    field = field.replace("null", "");
+                    ArrayList<ArrayList<Integer>> random_square = new ArrayList<>();
+                    ArrayList<Integer> result = new ArrayList<>();
+                    System.out.println(field);
+                    String[] field_row = field.split("\n");
+                    for (int i = 0; i < field_row.length; i++) {
+                        String[] field_col = field_row[i].split(" ");
+                        for (int j = 0; j < field_col.length; j++) {
+                            if (field_col[j].equals("-2")) {
+                                ArrayList<Integer> square = new ArrayList<>();
+                                square.add(i);
+                                square.add(j);
+                                random_square.add(square);
                             }
                         }
-                        Random random = new Random();
-                        result = random_square.get(random.nextInt(random_square.size()));
-                        System.out.println(random_square);
-                        out.write(result.get(0) +" "+ result.get(1) + "\n");
-                        out.flush();
-                        field = "";
-                    } else {
-                        out.write("Привет, это Сервер! Подтверждаю, вам передано время : " + time + "\n");
-                        out.flush();
                     }
+                    Random random = new Random();
+                    result = random_square.get(random.nextInt(random_square.size()));
+                    System.out.println(random_square);
+                    out.write(result.get(0) + " " + result.get(1) + "\n");
+                    out.flush();
+                    field = "";
+                } else {
+                    out.write("Привет, это Сервер! Подтверждаю, вам передано время : " + time + "\n");
+                    out.flush();
                 }
-
-
             }
 
         } catch (IOException e) {
             System.err.println(e);
         }
+    }
+
+    public ArrayList<ArrayList<Integer>> getLastTurns(ArrayList<ArrayList<Integer>> unknown_square){
+        int mines = 10;
+        int notOpened = unknown_square.size();
+        return null;
     }
 }

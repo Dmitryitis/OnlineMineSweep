@@ -190,7 +190,6 @@ public class Main extends Application {
         });
         NG2.setOnMouseClicked(event -> {
            client = new Client("dima", 4004);
-           ClientTwo clientTwo = new ClientTwo("alex",4004);
            GameField server_game = new GameField(client,"serverGame");
             try {
                 client.setWorkForServer();

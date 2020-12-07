@@ -18,7 +18,7 @@ public class Client {
     public Client(String username, int port) {
         this.username = username;
         this.port = port;
-        cs = new ClientSomething("localhost",3244,this.username);
+        cs = new ClientSomething("localhost", 3244, this.username);
     }
 
     public Client() {
@@ -40,7 +40,7 @@ public class Client {
         this.port = port;
     }
 
-    public void setStopMessage(){
+    public void setStopMessage() {
     }
 
     public int getSendMessage(String message) throws IOException {
@@ -55,10 +55,6 @@ public class Client {
         return cs.isConnected();
     }
 
-    public static void main(String[] args) {
-        Application.launch(Main.class,args);
-    }
-
     public String getMessageFieldFromServer(String field) throws IOException {
         return cs.getMessageFieldFromServer(field);
     }
@@ -66,5 +62,10 @@ public class Client {
     public String getMessageToServerSquare(String message) throws IOException {
         return cs.getMessageToServerSquare(message);
     }
+
+    public static void main(String[] args) {
+        Application.launch(Main.class, args);
+    }
+
 
 }

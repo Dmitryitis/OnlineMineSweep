@@ -16,7 +16,6 @@ Model\Minefield.class
 View\GameField.class
 Model\Tile$1.class
 Model\Tile.class
-Controller\ClientTwo.class
 Controller\Main.class
 Interfaces\HasParent.class
 Model\Square.class

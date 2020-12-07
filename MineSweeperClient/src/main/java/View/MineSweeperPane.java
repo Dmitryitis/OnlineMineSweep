@@ -328,10 +328,9 @@ public final class MineSweeperPane implements HasParent {
         for (int i = 0; i < field.getRowCount(); i++) {
             for (int j = 0; j < field.getColumnCount(); j++) {
                 if (field.getSquare(i, j).getType() == Squares.BLANK) {
-                    array_field[i][j] = -2;
+                    array_field[i][j] = 9;
                 } else if (field.getSquare(i, j).getType() == Squares.EXPOSED) {
                     int sq =field.getSquare(i,j).getMineCount();
-                    System.out.println(sq+" ");
                     array_field[i][j] = sq;
                 } else if (field.getSquare(i, j).getType() == Squares.HITMINE) {
                     array_field[i][j] = -1;

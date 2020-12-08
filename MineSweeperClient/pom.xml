@@ -11,6 +11,4 @@
     <packaging>jar</packaging>
 
     <artifactId>MineSweeperClient</artifactId>
-
-
 </project>

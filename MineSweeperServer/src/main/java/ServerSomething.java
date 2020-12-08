@@ -124,28 +124,106 @@ public class ServerSomething extends Thread {
         for (int i = 0; i < fieldForBot.size(); i++) {
             for (int j = 0; j < fieldForBot.get(i).size(); j++) {
                 if (i > 0) {
-                    if (fieldForBot.get(i).get(j) == 1 & j < 8) {
-                        String up = "up";
-                        Horizontal111ClosedSquares(i, j, up);
+                    String up = "up";
+                    if (fieldForBot.get(i).get(j) == 1 & (j < 8 | j < 7)) {
+                        if (j < 7) {
+                            if (IfFourHorizontalOnes(i, j, 1, 1, 1, 1)) {
+                                Horizontal1111ClosedSquares(i, j, up);
+                            }
+                        }
+                        if (IfThreeHorizontalOnes(i, j, 1, 1, 1)) {
+                            Horizontal111ClosedSquares(i, j, up);
+                        }
+                    }
+                    if (j < 8) {
+                        if (fieldForBot.get(i).get(j) == 1 & fieldForBot.get(i).get(j + 1) == 2) {
+                            if (j < 7) {
+                                if (IfFourHorizontalOnes(i, j, 1, 2, 2, 1)) {
+                                    Horizontal1221ClosedSquares(i, j, up);
+                                }
+                            }
+                            if (IfThreeHorizontalOnes(i, j, 1, 2, 1)) {
+                                Horizontal121ClosedSquares(i, j, up);
+                            }
+                        }
                     }
                 }
                 if (i < 9) {
                     String down = "down";
-                    if (fieldForBot.get(i).get(j) == 1 & j < 8) {
-                        Horizontal111ClosedSquares(i, j, down);
+                    if (fieldForBot.get(i).get(j) == 1 & (j < 8 | j < 7)) {
+                        if (j < 7) {
+                            if (IfFourHorizontalOnes(i, j, 1, 1, 1, 1)) {
+                                Horizontal1111ClosedSquares(i, j, down);
+                            }
+                        }
+                        if (IfThreeHorizontalOnes(i, j, 1, 1, 1)) {
+                            Horizontal111ClosedSquares(i, j, down);
+                        }
+                    }
+                    if (j < 8) {
+                        if (fieldForBot.get(i).get(j) == 1 & fieldForBot.get(i).get(j + 1) == 2) {
+                            if (j < 7) {
+                                if (IfFourHorizontalOnes(i, j, 1, 2, 2, 1)) {
+                                    Horizontal1221ClosedSquares(i, j, down);
+                                }
+                            }
+                            if (IfThreeHorizontalOnes(i, j, 1, 2, 1)) {
+                                Horizontal121ClosedSquares(i, j, down);
+                            }
+                        }
                     }
                 }
                 if (j > 0) {
-                    if (fieldForBot.get(i).get(j) == 1 & i < 8) {
-                        String left = "left";
-                        Vertical111ClosedSquares(i, j, left);
+                    String left = "left";
+                    if (fieldForBot.get(i).get(j) == 1 & (i < 8 | i < 7)) {
+                        if (i < 7) {
+                            if (IfFourVerticalOnes(i, j, 1, 1, 1, 1)) {
+                                Vertical1111ClosedSquares(i, j, left);
+                            }
+                        }
+                        if (IfThreeVerticalOnes(i, j, 1, 1, 1)) {
+                            Vertical111ClosedSquares(i, j, left);
+                        }
                     }
+                    if (i < 8) {
+                        if (fieldForBot.get(i).get(j) == 1 & fieldForBot.get(i + 1).get(j) == 2) {
+                            if (i < 7) {
+                                if (IfFourVerticalOnes(i, j, 1, 2, 2, 1)) {
+                                    Vertical1221ClosedSquares(i, j, left);
+                                }
+                            }
+                            if (IfThreeVerticalOnes(i, j, 1, 2, 1)) {
+                                Vertical121ClosedSquares(i, j, left);
+                            }
+                        }
+                    }
+
                 }
                 if (j < 9) {
+                    String right = "right";
+                    if (fieldForBot.get(i).get(j) == 1 & (i < 8 | i < 7)) {
 
-                    if (fieldForBot.get(i).get(j) == 1 & i < 8) {
-                        String right = "right";
-                        Vertical111ClosedSquares(i, j, right);
+                        if (i < 7) {
+                            if (IfFourVerticalOnes(i, j, 1, 1, 1, 1)) {
+                                Vertical1111ClosedSquares(i, j, right);
+                            }
+                        }
+                        if (IfThreeVerticalOnes(i, j, 1, 1, 1)) {
+                            Vertical111ClosedSquares(i, j, right);
+                        }
+                    }
+
+                    if (i < 8) {
+                        if (fieldForBot.get(i).get(j) == 1 & fieldForBot.get(i + 1).get(j) == 2) {
+                            if (i < 7) {
+                                if (IfFourVerticalOnes(i, j, 1, 2, 2, 1)) {
+                                    Vertical1221ClosedSquares(i, j, right);
+                                }
+                            }
+                            if (IfThreeVerticalOnes(i, j, 1, 2, 1)) {
+                                Vertical121ClosedSquares(i, j, right);
+                            }
+                        }
                     }
                 }
             }
@@ -153,42 +231,179 @@ public class ServerSomething extends Thread {
     }
 
     private void Horizontal111ClosedSquares(int i, int j, String side) {
-        if (IfThreeHorizontalOnes(i, j)) {
-            int index = -1;
-            if (side.equals("up")) {
-                index = findIndex(i - 1, j + 1);
-            } else if (side.equals("down")) {
-                index = findIndex(i + 1, j + 1);
-            }
-            if (index != -1) {
+
+        int index = -1;
+        if (side.equals("up")) {
+            index = findIndex(i - 1, j + 1);
+            System.out.println("I mine in the up 111");
+        } else if (side.equals("down")) {
+            index = findIndex(i + 1, j + 1);
+            System.out.println("I mine in the down 111");
+        }
+        if (index != -1) {
+            random_square.remove(index);
+        }
+
+    }
+
+    private void Horizontal1111ClosedSquares(int i, int j, String side) {
+
+        int index = -1;
+        int indextwo = -1;
+        if (side.equals("up")) {
+            index = findIndex(i - 1, j);
+            indextwo = findIndex(i - 1, j + 3);
+        } else if (side.equals("down")) {
+            index = findIndex(i + 1, j);
+            indextwo = findIndex(i + 1, j + 3);
+        }
+
+        if (index != -1 & indextwo != -1) {
+            random_square.remove(index);
+            random_square.remove(indextwo);
+        }
+
+    }
+
+    private void Horizontal121ClosedSquares(int i, int j, String side) {
+        int index = -1;
+        int indexTwo = -1;
+        if (side.equals("up")) {
+            index = findIndex(i - 1, j);
+            indexTwo = findIndex(i - 1, j + 2);
+        } else if (side.equals("down")) {
+            index = findIndex(i + 1, j);
+            indexTwo = findIndex(i + 1, j + 2);
+        }
+
+        try {
+            if (index != -1 & indexTwo != -1) {
                 random_square.remove(index);
+                random_square.remove(indexTwo);
             }
+        } catch (IndexOutOfBoundsException e){
+            return;
+        }
+
+    }
+
+    private void Horizontal1221ClosedSquares(int i, int j, String side) {
+        int index = -1;
+        int indexTwo = -1;
+        if (side.equals("up")) {
+            index = findIndex(i - 1, j + 1);
+            indexTwo = findIndex(i - 1, j + 2);
+        } else if (side.equals("down")) {
+            index = findIndex(i + 1, j + 1);
+            indexTwo = findIndex(i + 1, j + 2);
+        }
+
+        try {
+            if (index != -1 & indexTwo != -1) {
+                random_square.remove(index);
+                random_square.remove(indexTwo);
+            }
+        } catch (IndexOutOfBoundsException e){
+            return;
+        }
+    }
+
+    private void Vertical121ClosedSquares(int i, int j, String side) {
+        int index = -1;
+        int indexTwo = -1;
+        if (side.equals("left")) {
+            index = findIndex(i, j - 1);
+            indexTwo = findIndex(i + 2, j - 1);
+            System.out.println("I mine in the left 121");
+        } else if (side.equals("right")) {
+            index = findIndex(i, j + 1);
+            indexTwo = findIndex(i + 2, j + 1);
+            System.out.println("I mine in the right 121");
+        }
+
+        if (index != -1 & indexTwo != -1) {
+            random_square.remove(index);
+            random_square.remove(indexTwo);
         }
     }
 
     private void Vertical111ClosedSquares(int i, int j, String side) {
-        if (IfThreeVerticalOnes(i, j)) {
-            int index = -1;
-            if (side.equals("left")) {
-                index = findIndex(i + 1, j - 1);
-            } else if (side.equals("right")) {
-                index = findIndex(i + 1, j + 1);
-            }
 
-            if (index != -1) {
-                random_square.remove(index);
-            }
+        int index = -1;
+        if (side.equals("left")) {
+            index = findIndex(i + 1, j - 1);
+            System.out.println("I mine in the left 111");
+        } else if (side.equals("right")) {
+            System.out.println("I mine in the right 111");
+            index = findIndex(i + 1, j + 1);
+        }
+
+        if (index != -1) {
+            random_square.remove(index);
         }
     }
 
-    private boolean IfThreeHorizontalOnes(int i, int j) {
-        return fieldForBot.get(i).get(j) == 1 & fieldForBot.get(i).get(j + 1) == 1
-                & fieldForBot.get(i).get(j + 2) == 1;
+    private void Vertical1111ClosedSquares(int i, int j, String side) {
+        int index = -1;
+        int indexTwo = -1;
+        if (side.equals("left")) {
+            index = findIndex(i, j - 1);
+            indexTwo = findIndex(i + 3, j - 1);
+        } else if (side.equals("right")) {
+            index = findIndex(i, j + 1);
+            indexTwo = findIndex(i + 3, j + 1);
+        }
+        try {
+            if (index != -1 & indexTwo != -1) {
+                random_square.remove(index);
+                random_square.remove(indexTwo);
+            }
+        } catch (IndexOutOfBoundsException e){
+            return;
+        }
     }
 
-    private boolean IfThreeVerticalOnes(int i, int j) {
-        return fieldForBot.get(i).get(j) == 1 & fieldForBot.get(i + 1).get(j) == 1
-                & fieldForBot.get(i + 2).get(j) == 1;
+    private void Vertical1221ClosedSquares(int i, int j, String side) {
+        int index = -1;
+        int indexTwo = -1;
+        if (side.equals("left")) {
+            index = findIndex(i + 1, j - 1);
+            indexTwo = findIndex(i + 2, j - 1);
+        } else if (side.equals("right")) {
+            index = findIndex(i + 1, j + 1);
+            indexTwo = findIndex(i + 2, j + 1);
+        }
+
+        try {
+            if (index != -1 & indexTwo != -1) {
+                random_square.remove(index);
+                random_square.remove(indexTwo);
+            }
+        } catch (IndexOutOfBoundsException e){
+            return;
+        }
+    }
+
+    private boolean IfThreeHorizontalOnes(int i, int j, int firstvalue, int secondvalue, int thirdvalue) {
+        return fieldForBot.get(i).get(j) == firstvalue & fieldForBot.get(i).get(j + 1) == secondvalue
+                & fieldForBot.get(i).get(j + 2) == thirdvalue;
+    }
+
+    private boolean IfFourHorizontalOnes(int i, int j, int firstvalue, int secondvalue, int thirdvalue,
+                                         int fourvalue) {
+        return fieldForBot.get(i).get(j) == firstvalue & fieldForBot.get(i).get(j + 1) == secondvalue
+                & fieldForBot.get(i).get(j + 2) == thirdvalue & fieldForBot.get(i).get(j + 3) == fourvalue;
+    }
+
+    private boolean IfThreeVerticalOnes(int i, int j, int firstvalue, int secondvalue, int thirdvalue) {
+        return fieldForBot.get(i).get(j) == firstvalue & fieldForBot.get(i + 1).get(j) == secondvalue
+                & fieldForBot.get(i + 2).get(j) == thirdvalue;
+    }
+
+    private boolean IfFourVerticalOnes(int i, int j, int firstvalue, int secondvalue, int thirdvalue,
+                                       int fourvalue) {
+        return fieldForBot.get(i).get(j) == firstvalue & fieldForBot.get(i + 1).get(j) == secondvalue
+                & fieldForBot.get(i + 2).get(j) == thirdvalue & fieldForBot.get(i + 3).get(j) == fourvalue;
     }
 
     private int findIndex(int x, int y) {

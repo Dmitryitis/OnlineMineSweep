@@ -11,8 +11,6 @@ public class ClientSomething {
     private static BufferedWriter out;
     private static Socket clientSocket;
     private String username;
-    private static ObjectOutputStream outmassiv;
-    private static ObjectInputStream inmassiv;
 
     public ClientSomething() {
     }

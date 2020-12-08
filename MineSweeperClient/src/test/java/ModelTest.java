@@ -1,6 +1,11 @@
-import Model.Minefield;
+import Controller.Client;
+import Model.*;
+import View.GameField;
+import View.MineSweeperPane;
+import javafx.scene.image.Image;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.Random;
 
@@ -8,6 +13,8 @@ import static org.junit.Assert.assertEquals;
 
 public class ModelTest {
     private Minefield field;
+    private Client client = new Client();
+    private GameField gameField = new GameField();
 
     @Before
     public void setUp() throws Exception {
@@ -41,4 +48,29 @@ public class ModelTest {
     public void OutOfBounds() {
         field.getSquare(-1, 0);
     }
+
+    @Test
+    public void scaleRow(){
+        FieldCanvas fieldCanvas = new FieldCanvas();
+        int scale = -1;
+        scale = fieldCanvas.scaleRow(24);
+
+        assertEquals(scale,1);
+    }
+
+    @Test
+    public void reset(){
+        Minefield minefield = Mockito.mock(Minefield.class);
+
+        minefield.reset();
+    }
+
+
+    @Test
+    public void GameField(){
+        GameField f = Mockito.mock(GameField.class);
+        f.setParametrField();
+    }
+
+
 }

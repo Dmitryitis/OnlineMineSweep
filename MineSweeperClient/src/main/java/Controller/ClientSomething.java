@@ -21,6 +21,14 @@ public class ClientSomething {
         this.username = username;
     }
 
+    public void setClientSocket(){
+        try {
+            clientSocket = new Socket("localhost",3244);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void setWorkForServer() throws IOException {
         System.out.println(this.username);
         if (clientSocket == null) {

@@ -24,6 +24,10 @@ public class Client {
     public Client() {
     }
 
+    public void setClientSocket() {
+        cs.setClientSocket();
+    }
+
     public String getUsername() {
         return username;
     }
@@ -66,6 +70,5 @@ public class Client {
     public static void main(String[] args) {
         Application.launch(Main.class, args);
     }
-
 
 }

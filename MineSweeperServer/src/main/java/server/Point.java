@@ -1,3 +1,5 @@
+package server;
+
 import org.omg.PortableServer.POA;
 
 public class Point {

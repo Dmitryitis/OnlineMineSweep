@@ -19,7 +19,6 @@ import javafx.util.Duration;
 import java.io.IOException;
 
 
-
 public final class MineSweeperPane implements HasParent {
     private final Parent root;
     private final Label status;
@@ -127,38 +126,41 @@ public final class MineSweeperPane implements HasParent {
         field.reset();
     }
 
-    private void onCanvasClicked(MouseEvent event) {
-        if (!gameover & !field.isGameOver() & botSquare != null & turn == 1 & appController.getName_of_game().equals("serverGame") & client.isConnect()) {
-            label_timer.setText("Сейчас ходит сервер");
-            turn = 0;
-            if (botSquare != null && botSquare.isMine()) {
-                gameover = true;
-                label_timer.setText("You win.Server boom");
-                timeline.stop();
-                timer = -1;
+    public void onCanvasClicked(MouseEvent event) {
+        if (!gameover & !field.isGameOver() & botSquare != null & turn == 1 & appController.getName_of_game().equals("serverGame")) {
+            if (client.isConnect()) {
+
+                label_timer.setText("Сейчас ходит сервер");
+                turn = 0;
+                if (botSquare != null && botSquare.isMine()) {
+                    gameover = true;
+                    label_timer.setText("You win.server.Server boom");
+                    timeline.stop();
+                    timer = -1;
+                    canvas.clearSelection();
+                    botSquare.reveal();
+                    drawSquare(botSquare);
+                    drawBoard();
+                    updateText(State.WON);
+                    return;
+                }
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 canvas.clearSelection();
                 botSquare.reveal();
                 drawSquare(botSquare);
                 drawBoard();
-                updateText(State.WON);
+                try {
+                    timer = client.getSendMessage("blank");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                updateTime(timer);
                 return;
             }
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            canvas.clearSelection();
-            botSquare.reveal();
-            drawSquare(botSquare);
-            drawBoard();
-            try {
-                timer = client.getSendMessage("blank");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            updateTime(timer);
-            return;
         }
         turn = 1;
         Square square = findSquare(event);
@@ -170,69 +172,70 @@ public final class MineSweeperPane implements HasParent {
             square.revealNearby();
         } else if (clicks == 1 && button == MouseButton.PRIMARY) {
 
-            if (client == null) {
-                System.out.println("ouuu clent");
-            } else if (!gameover & !field.isGameOver() & appController.getName_of_game().equals("serverGame") & client.isConnect()) {
-                System.out.println(appController.getName_of_game());
-                int[][] fieldForServer = new int[field.getRowCount()][field.getColumnCount()];
-                String answer = "";
-                String res = "";
-                if (square.getType() == Squares.BLANK) {
-                    try {
-                        if (timer == 0) {
-                            label_timer.setText("Время вышло. Ты проиграл");
-                            timeline.stop();
-                            timer = -1;
 
-                            updateText(State.LOST);
-                            gameover = true;
-                            if (field.isGameOver()){
-                                System.out.println("uraaaa i am lost");
+            if (!gameover & !field.isGameOver() & appController.getName_of_game().equals("serverGame")) {
+                if (client.isConnect()) {
+                    System.out.println(appController.getName_of_game());
+                    int[][] fieldForServer = new int[field.getRowCount()][field.getColumnCount()];
+                    String answer = "";
+                    String res = "";
+                    if (square.getType() == Squares.BLANK) {
+                        try {
+                            if (timer == 0) {
+                                label_timer.setText("Время вышло. Ты проиграл");
+                                timeline.stop();
+                                timer = -1;
+
+                                updateText(State.LOST);
+                                gameover = true;
+                                if (field.isGameOver()) {
+                                    System.out.println("uraaaa i am lost");
+                                }
+                                return;
                             }
-                            return;
-                        }
 
-                        canvas.clearSelection();
-                        square.reveal();
-                        drawSquare(square);
-                        drawBoard();
+                            canvas.clearSelection();
+                            square.reveal();
+                            drawSquare(square);
+                            drawBoard();
 
 
-                        fieldForServer = getField(field);
-                        String strForServer = "";
-                        for (int i = 0; i < field.getRowCount(); i++) {
-                            for (int j = 0; j < field.getColumnCount(); j++) {
-                                strForServer += fieldForServer[i][j] + " ";
+                            fieldForServer = getField(field);
+                            String strForServer = "";
+                            for (int i = 0; i < field.getRowCount(); i++) {
+                                for (int j = 0; j < field.getColumnCount(); j++) {
+                                    strForServer += fieldForServer[i][j] + " ";
+                                }
+                                strForServer += "\n";
                             }
-                            strForServer += "\n";
+                            System.out.println(strForServer);
+                            Squares hitmine = getTable(field);
+                            if (hitmine == Squares.HITMINE) {
+                                timeline.stop();
+                                timer = -1;
+                                return;
+                            }
+
+                            answer = client.getMessageFieldFromServer(strForServer);
+                            res = client.getMessageToServerSquare("square");
+
+                            res = res.replace("\n", "");
+                            String[] sq = res.split(" ");
+                            System.out.println(sq[0] + " " + sq[1]);
+                            botSquare = field.getSquare(Integer.parseInt(sq[0]), Integer.parseInt(sq[1]));
+
+                            if (!gameover) {
+                                canvas.setOnMouseClicked(this::onCanvasClicked);
+                            }
+
+                            timer = client.getSendMessage("blank");
+
+                            System.out.println("onCanvas: " + timer);
+                            updateTime(timer);
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                        System.out.println(strForServer);
-                        Squares hitmine = getTable(field);
-                        if (hitmine == Squares.HITMINE) {
-                            timeline.stop();
-                            timer = -1;
-                            return;
-                        }
-
-                        answer = client.getMessageFieldFromServer(strForServer);
-                        res = client.getMessageToServerSquare("square");
-
-                        res = res.replace("\n", "");
-                        String[] sq = res.split(" ");
-                        System.out.println(sq[0] + " " + sq[1]);
-                        botSquare = field.getSquare(Integer.parseInt(sq[0]), Integer.parseInt(sq[1]));
-
-                        if (!gameover) {
-                            canvas.setOnMouseClicked(this::onCanvasClicked);
-                        }
-
-                        timer = client.getSendMessage("blank");
-
-                        System.out.println("onCanvas: " + timer);
-                        updateTime(timer);
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
                 }
             } else if (appController.getName_of_game().equals("singleGame")) {
@@ -276,7 +279,7 @@ public final class MineSweeperPane implements HasParent {
                 text = "Congratulations, you won!";
                 break;
             case ServerWin:
-                text = "Server win";
+                text = "server.Server win";
                 break;
             default:
                 text = "";
@@ -330,7 +333,7 @@ public final class MineSweeperPane implements HasParent {
                 if (field.getSquare(i, j).getType() == Squares.BLANK) {
                     array_field[i][j] = 9;
                 } else if (field.getSquare(i, j).getType() == Squares.EXPOSED) {
-                    int sq =field.getSquare(i,j).getMineCount();
+                    int sq = field.getSquare(i, j).getMineCount();
                     array_field[i][j] = sq;
                 } else if (field.getSquare(i, j).getType() == Squares.HITMINE) {
                     array_field[i][j] = -1;

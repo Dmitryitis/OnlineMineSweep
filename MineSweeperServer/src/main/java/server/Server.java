@@ -28,7 +28,6 @@ public class Server {
             System.out.println("I work in server");
             while (true) {
                 Socket socket = server.accept();
-                System.out.println("huiii");
                 try {
                     serverList.add(new ServerSomething(socket)); // добавить новое соединенние в список
                 } catch (IOException e) {

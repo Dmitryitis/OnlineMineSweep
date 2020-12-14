@@ -117,11 +117,11 @@ public class Main extends Application {
         Scene scene = new Scene(root, SIZE_W, SIZE_H);
         scene.setFill(Color.BLACK);
 
-        String main_m = "MineSweeperClient/src/main/webapp/music/mainTheme.mp3";
-        Media main_mus = new Media(new File(main_m).toURI().toString());
-        MediaPlayer mainPlayer = new MediaPlayer(main_mus);
-        mainPlayer.autoPlayProperty();
-        mainPlayer.pause();
+//        String main_m = "MineSweeperClient/src/main/webapp/music/mainTheme.mp3";
+//        Media main_mus = new Media(new File(main_m).toURI().toString());
+//        MediaPlayer mainPlayer = new MediaPlayer(main_mus);
+//        mainPlayer.autoPlayProperty();
+//        mainPlayer.pause();
 
 
         options.setOnMouseClicked(event -> {
@@ -141,7 +141,7 @@ public class Main extends Application {
             root.getChildren().addAll(menuBox);
         });
         NG3.setOnMouseClicked(event -> {
-                    mainPlayer.pause();
+//                    mainPlayer.pause();
                     menuBox.setVisible(false);
                     gF = new GameField();
                     gF.setSpawnMode(true);
@@ -215,10 +215,10 @@ public class Main extends Application {
 
         scene.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ESCAPE && !escappe) {
-                String path_music = "MineSweeperClient/src/main/webapp/music/sound_click.mp3";
-                Media media = new Media(new File(path_music).toURI().toString());
-                MediaPlayer mediaPlayer = new MediaPlayer(media);
-                mediaPlayer.play();
+//                String path_music = "MineSweeperClient/src/main/webapp/music/sound_click.mp3";
+//                Media media = new Media(new File(path_music).toURI().toString());
+//                MediaPlayer mediaPlayer = new MediaPlayer(media);
+//                mediaPlayer.play();
 
                 menuBox.setSubMenu(mainMenu);
                 root.getChildren().remove(menuBox);
@@ -232,12 +232,12 @@ public class Main extends Application {
                 ft.play();
                 PauseTransition wait = new PauseTransition(Duration.seconds(2));
 
-                wait.setOnFinished(event1 -> {
-                    mainPlayer.setStartTime(Duration.seconds(11));
-                    mainPlayer.play();
-
-                });
-                wait.play();
+//                wait.setOnFinished(event1 -> {
+//                    mainPlayer.setStartTime(Duration.seconds(11));
+//                    mainPlayer.play();
+//
+//                });
+//                wait.play();
 
             }
         });
